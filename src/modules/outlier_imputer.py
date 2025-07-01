@@ -18,9 +18,7 @@ class OutlierImputer(BaseEstimator, TransformerMixin):
         # Determine columns to process
         if self.columns is None:
             # Select all numeric columns by default
-            self.columns_ = X.select_dtypes(include='number').columns.tolist()
-        else:
-            self.columns_ = self.columns
+            self.columns = X.select_dtypes(include='number').columns.tolist()
 
         self.means_ = {}
         self.bounds_ = {}
