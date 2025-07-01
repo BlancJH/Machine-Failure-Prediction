@@ -3,10 +3,10 @@ from src.modules.outlier_detector import detect_outliers
 import pandas as pd
 
 class OutlierImputer(BaseEstimator, TransformerMixin):
-    def __init__(self, columns, multiplier=1.5):
+    def __init__(self, columns=None, multiplier=1.5):
         """
         Parameters:
-            columns (list of str): List of column names to impute for outliers.
+            columns (list of str): List of column names to impute for outliers. If None, all numeric columns will be used.
             multiplier (float): The multiplier to define the IQR outlier bounds.
         """
         self.columns = columns
@@ -15,6 +15,13 @@ class OutlierImputer(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         """ Compute the mean and outlier bounds for each specified column based on the IQR method. """
         X = X.copy()
+        # Determine columns to process
+        if self.columns is None:
+            # Select all numeric columns by default
+            self.columns_ = X.select_dtypes(include='number').columns.tolist()
+        else:
+            self.columns_ = self.columns
+
         self.means_ = {}
         self.bounds_ = {}
         for col in self.columns:
