@@ -37,6 +37,11 @@ class OutlierImputer(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         """ Replace outliers in each specified column with the pre-computed mean value. """
         X = X.copy()
+        # Upcast integer columns to float to avoid dtype conflicts
+        for col in self.columns:
+            if pd.api.types.is_integer_dtype(X[col].dtype):
+                X[col] = X[col].astype(float)
+
         for col in self.columns:
             lower_bound, upper_bound = self.bounds_[col]
             mean_value = self.means_[col]
